@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src='js.js' defer></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id='spinner' class='spinbox'>
+        <div class="loader">Loading...</div>
+    </div>
+    <div class="ui left vertical inverted sidebar labeled icon menu">
+        <a id='Homebtn' class="item">
+            <i id='HomeIele' class="home icon"></i>
+            Home
+        </a>
+        <a id='Stockbtn' class="item">
+            <i id='StockIele' class="block layout icon"></i>
+            Stock
+        </a>
+        <a id='Scanbtn' class="item">
+            <i id='ScanIele' class="barcode icon"></i>
+            Scan Item
+        </a>
+        <a id='Settingsbtn' class="item">
+            <i id='SettingsIele' class="cogs icon"></i>
+            Settings
+        </a>
+        <a id='Adminbtn' class="item">
+            <i id='AdminIele' class="cogs icon"></i>
+            Admin panel
+        </a>
+        <a id='Logoutbtn' class="item">
+            <i id='LogoutIele' class="sign out alternate icon"></i>
+            Logout
+        </a>
+    </div>
+    <div class="pusher">
+        <section id='LoginSection' class='logincontainer'>
+            <form id='loginform' class="ui form">
+                <h2 id='LoginHeader'>Login</h2>
+                <div id='emailinput' class="field">
+                    <label>Email:</label>
+                    <input type='text' id='email'></input>
+                </div>
+                <div id='firstnameinput' class="field register">
+                    <label>First name:</label>
+                    <input type='text' id='firstname'></input>
+                </div>
+                <div id='lastnameinput' class="field register">
+                    <label>Last name:</label>
+                    <input type='text'  id='lastname'></input>
+                </div>
+                <div class="field">
+                <label>Password:</label>
+                <input type='text' id='password'></input>
+                </div>
+                <div class="field">
+                    <h3 id='login_err' class='error'>Invalid Login Details</h3>
+                </div>
+                <div id='loginui' class='field loginui'>
+                    <button type='button' class="ui button" onclick="ApiLogin()">Login</button>
+                    <button type='button' class="ui button" onclick="LoginUiSwap('registerui')">Register Account</button>
+                </div>
+                <div id='registerui' class='field registerui'>
+                    <button type='button' class="ui button" onclick="ApiRegister()">Register</button>
+                    <button type='button' class="ui button" onclick="LoginUiSwap('loginui')">Login Instead</button>
+                </div>
+            </form>
+        </section>
+        <section id='Home' class='Home'>
+            <div class="flex">
+                <h2 class='ui header'>
+                    <i class="home icon"></i>
+                    <div class="content">
+                        Home
+                    </div>
+                </h2>
+                <button class="ui button" onclick="toggle()">
+                    <i class="bars icon"></i>
+                </button>  
+            </div>
+        </section>
+        <section id='Stock' class='Stock'>
+            <div class="flex">
+                <h2 class='ui header'>
+                    <i class="block layout icon"></i>
+                    <div class="content">
+                        Stock
+                    </div>
+                </h2>
+                <button class="ui button" onclick="toggle()">
+                    <i class="bars icon"></i>
+                </button>
+            </div>
+            <div class="container">
+                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 1</h2></div>
+                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 2</h2></div>
+                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 3</h2></div>
+                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 4</h2></div>
+                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 5</h2></div>
+                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 6</h2></div>
+                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 7</h2></div>
+                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 8</h2></div>
+                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 9</h2></div>
+                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 10</h2></div>
+            </div>  
+        </section>
+        <section id='Scan' class='Scan'>
+            <div class="flex">
+                <h2 class='ui header'>
+                    <i class="barcode icon"></i>
+                    <div class="content">
+                        Scan
+                    </div>
+                </h2>
+                <button class="ui button" onclick="toggle()">
+                    <i class="bars icon"></i>
+                </button>  
+            </div>
+        </section>
+        <section id='Settings' class='Settings'>
+            <div class="flex">
+                <h2 class='ui header'>
+                    <i class="cogs icon"></i>
+                    <div class="content">
+                        Settings
+                    </div>
+                </h2>
+                <button class="ui button" onclick="toggle()">
+                    <i class="bars icon"></i>
+                </button>  
+            </div>
+            <div class="flex" style="flex-direction: column;" id='currentuser'>
+                <div class="flex">
+                    <h3>Name:</h3>
+                    <div id='currentName'></div>
+                </div>
+                <div class="flex">
+                    <h3>role:</h3>
+                    <div id='currentRole'></div>
+                </div>
+                <div class="flex">
+                    <h3>date Created:</h3>
+                    <div id='currentDate'></div>
+                </div>
+                <div class="flex">
+                    <h3>Email:</h3>
+                    <div id='currentEmail'></div>
+                </div>
+            </div>
+        </section>
+        <section id='Admin' class='Admin'>
+            <div id='editheader' class="flex">
+                <h2 class='ui header'>
+                    <i class="barcode icon"></i>
+                    <div class="content">
+                        Admin
+                    </div>
+                </h2>
+                <button class="ui button" onclick="toggle()">
+                    <i class="bars icon"></i>
+                </button>  
+            </div>
+            <div id='allUsers'></div>
+            <div class="edituser" id='edituser'>
+                <form id='editform' class="ui form editform">
+                    <h2>Edit User</h2>
+                    <div class="field">
+                        <label>Email:</label>
+                        <input type='text' id='userEmail'></input>
+                    </div>
+                    <div class="field">
+                        <label>First Name:</label>
+                        <input type='text' id='userFirstname'></input>
+                    </div>
+                    <div class="field">
+                        <label>Last Name:</label>
+                        <input type='text' id='userLastname'></input>
+                    </div>
+                    <div class="field">
+                        <label>Role:</label>
+                        <input type='text' id='userRole'></input>
+                    </div>
+                    <div class="field">
+                        <h3 id='edit_err' class='error'>Invalid Login Details</h3>
+                    </div>
+                    <div id='loginui' class='field loginui'>
+                        <button type='button' class="ui button secondary" onclick="CancelEdit()">Cancel</button>
+                        <button type='button' class="ui button primary" onclick="EditUser()">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
