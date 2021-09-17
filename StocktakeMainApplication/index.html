@@ -95,25 +95,31 @@
                         Stock
                     </div>
                 </h2>
-                <button class="ui button" onclick="toggle()">
+                <button id="stocksidebar" class="ui button" onclick="toggle()">
                     <i class="bars icon"></i>
                 </button>
             </div>
-            <div class="container">
-                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 1</h2></div>
-                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 2</h2></div>
-                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 3</h2></div>
-                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 4</h2></div>
-                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 5</h2></div>
-                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 6</h2></div>
-                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 7</h2></div>
-                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 8</h2></div>
-                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 9</h2></div>
-                <div class="StockItem"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Location 10</h2></div>
-            </div>  
+            <form id='locationform' class="ui form locationform">
+                <div class="field">
+                    <label>Location Name</label>
+                    <input type='text' id='LocationName'></input>
+                    <div style="margin-top:10px;">
+                        <button type="button" class="ui secondary button" onclick="canceladdlocation()">
+                            cancel
+                        </button>
+                        <button type="button" class="ui button" onclick="addlocation()">
+                            Add
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div id='stockitems' class="container">
+                <div class="StockItem" onclick="locationform()"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Add New Location</h2></div>
+            </div> 
+            <div id="locationstock" style="display: none;"></div> 
         </section>
-        <section id='Scan' class='Scan'>
-            <div class="flex">
+        <section id='Scan' class='scan'>
+            <div class="flex overtop">
                 <h2 class='ui header'>
                     <i class="barcode icon"></i>
                     <div class="content">
@@ -124,6 +130,7 @@
                     <i class="bars icon"></i>
                 </button>  
             </div>
+            <video autoplay="true" id="videoElement"></video>
         </section>
         <section id='Settings' class='Settings'>
             <div class="flex">
@@ -191,9 +198,8 @@
                     <div class="field">
                         <h3 id='edit_err' class='error'>Invalid Login Details</h3>
                     </div>
-                    <div id='loginui' class='field loginui'>
+                    <div id='editui' class='field loginui'>
                         <button type='button' class="ui button secondary" onclick="CancelEdit()">Cancel</button>
-                        <button type='button' class="ui button primary" onclick="EditUser()">Save Changes</button>
                     </div>
                 </form>
             </div>

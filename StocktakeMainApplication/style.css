@@ -19,6 +19,14 @@ input{
     z-index: 2;
 }
 
+.userlist{
+  margin: 10px;
+}
+
+.locationform{
+  display: none;
+}
+
 form{
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 4px;
@@ -40,8 +48,16 @@ a > i{
 .flex{
     display: flex;
     flex-direction: row;
-    margin: 5px;
+    padding: 5px;
     justify-content: space-evenly;
+}
+
+section{
+  min-height: 100vh;
+}
+
+.scan{
+  max-height: 100vh;
 }
 
 .registerui{
@@ -65,6 +81,11 @@ a > i{
     -moz-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
     -webkit-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.overtop{
+  position: fixed;
+  width: 100vw;
 }
 
 /* code for spinner start */
@@ -146,3 +167,10 @@ a > i{
   }
 
   /* code for spiner end */
+
+  /* video style */
+
+
+  #videoElement {
+    background-color: #666;
+  }
