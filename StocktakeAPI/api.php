@@ -5,7 +5,7 @@ session_name();
 session_start();
 header('Content-type: application/json');
 //function to check origin whitelist
-//is_correct_origin();
+//isCorrectOrigin();
 
 $validation = new validation;
 
@@ -18,27 +18,26 @@ $resp_body = array('internal server error' => false);
 $_SESSION['newtime'] = time();
 
 //the two functions below control rate limiting; the passed int is how many requests users can do within a single day/second
-dayratelimit(1000);
-secondratelimit(5);
+dayRateLimit(1000);
+secondRateLimit(5);
 
-$dbfunctions = new dbfunc;
-extract($_POST);
+$dbfunctions = new dbFunc;
 
 //the below switch case checks the Action parameter of the GET headers to control how the api reponds to the request
 if(isset($_GET['action'])){
     switch ($_GET['action']){
         case 'isloggedin':
-            if(isloggedin()){
+            if(isLoggedIn()){
                 $resp_code = 201;
-                $resp_body = array('isloggedin' => true);
+                $resp_body = array('isLoggedIn' => true);
             }
             else{
                 $resp_code = 400;
-                $resp_body = array('isloggedin' => false);
+                $resp_body = array('isLoggedIn' => false);
             }
             break;
         case 'login':
-            if( $dbfunctions->login($email, $password)){
+            if( $dbfunctions->login()){
                 $resp_code = 201;
                 $resp_body = array( 'loggedin' => true);
             }
@@ -48,9 +47,9 @@ if(isset($_GET['action'])){
             }
             break;
         case 'logout':
-            if(isloggedin()){
+            if(isLoggedIn()){
                 $resp_code = 201;    
-                logout($resp_code);
+                logOut($resp_code);
                 $resp_body = array( 'logout' => true);
             }      
             else{
@@ -65,8 +64,8 @@ if(isset($_GET['action'])){
             $resp_body = array($newresp['body'] => true);
             break;
         case 'checkadmin':
-            if(isloggedin()){
-                if(checkadmin()){
+            if(isLoggedIn()){
+                if(checkAdmin()){
                     $resp_code = 201;
                     $resp_body = array( 'admin' => true);
                 }
@@ -81,9 +80,9 @@ if(isset($_GET['action'])){
             }
             break;
         case 'currentuser':
-            if(isloggedin()){
+            if(isLoggedIn()){
                 $resp_code = 201;
-                $resp_body = $dbfunctions->fetchcurrentuser($_SESSION['user_id']);
+                $resp_body = $dbfunctions->fetchCurrentUser($_SESSION['user_id']);
             }
             else{
                 $resp_code = 400;
@@ -91,9 +90,9 @@ if(isset($_GET['action'])){
             }
             break;
         case 'viewuser':
-            if(isloggedin()){
+            if(isLoggedIn()){
                 $resp_code = 201;
-                $resp_body = $dbfunctions->fetchcurrentuser($_GET['user_id']);
+                $resp_body = $dbfunctions->fetchCurrentUser($_GET['user_id']);
             }
             else{
                 $resp_code = 400;
@@ -101,10 +100,10 @@ if(isset($_GET['action'])){
             }
             break;
         case 'alluser':
-            if(isloggedin()){
-                if(checkadmin()){
+            if(isLoggedIn()){
+                if(checkAdmin()){
                     $resp_code = 201;
-                    $resp_body = $dbfunctions->fetchallusers();
+                    $resp_body = $dbfunctions->fetchAllUsers();
                 }
                 else{
                     $resp_code = 400;
@@ -117,9 +116,9 @@ if(isset($_GET['action'])){
             }
             break;
         case 'deleteuser':
-            if(isloggedin()){
-                if(checkadmin()|| checkuser($_GET['user_id'])){
-                    $newresp = $dbfunctions->deleteuser($_GET['user_id']);
+            if(isLoggedIn()){
+                if(checkAdmin()|| checkUser($_GET['user_id'])){
+                    $newresp = $dbfunctions->deleteUser($_GET['user_id']);
                     $resp_code = $newresp['code'];
                     $resp_body = array( 'delete' => $newresp['body']);
                 }
@@ -130,8 +129,8 @@ if(isset($_GET['action'])){
             }
             break;
         case 'edituser':
-            if(fullcheck($_GET['user_id'])){
-                $newresp = $dbfunctions->edituser();
+            if(fullCheck($_GET['user_id'])){
+                $newresp = $dbfunctions->editUser();
                 $resp_code = $newresp['code'];
                 $resp_body = array($newresp['body'] => true);
             }
@@ -141,8 +140,8 @@ if(isset($_GET['action'])){
             }
             break;
         case 'addlocation':
-            if(isloggedin()){
-                $newresp = $dbfunctions->addlocation($_SESSION['user_id']);
+            if(isLoggedIn()){
+                $newresp = $dbfunctions->addLocation($_SESSION['user_id']);
                 $resp_code = $newresp['code'];
                 $resp_body = array($newresp['body'] => true);    
             }
@@ -153,8 +152,8 @@ if(isset($_GET['action'])){
 
             break;
         case 'getlocations':
-            if(isloggedin()){
-               $newresp = $dbfunctions->getlocations($_SESSION['user_id']);
+            if(isLoggedIn()){
+                $newresp = $dbfunctions->getLocations($_SESSION['user_id']);
                 $resp_code = 201;
                 $resp_body = $newresp; 
             }
@@ -165,8 +164,8 @@ if(isset($_GET['action'])){
             
             break;
         case 'getlocationstock':
-            if(isloggedin()){
-               $resp_body = $dbfunctions->getlocationstock();
+            if(isLoggedIn()){
+                $resp_body = $dbfunctions->getLocationStock();
                 $resp_code = 201; 
             }
             else{
@@ -181,7 +180,7 @@ if(isset($_GET['action'])){
 //the below if else tree checks what happned in the api and runs a logging function to track api actions within the database
 if($_GET['action'] != 'logout'){
     $newlog = new dbfunc;
-    if(isloggedin()){
+    if(isLoggedIn()){
         if(isset($_GET['action'])){
             $newlog->logActions($resp_code,session_id(),$_GET['action'],$_SESSION['user_id']);
         }
@@ -207,7 +206,7 @@ if($_GET['action'] != 'logout'){
 
 //below is the definitions of the functions that are called in the main logic of the api
 
-function isloggedin(){
+function isLoggedIn(){
     if(isset($_SESSION['loggedin'])){
         if($_SESSION['loggedin'] == true){
         return true;
@@ -221,7 +220,7 @@ function isloggedin(){
     }
 }
 
-function checkadmin(){
+function checkAdmin(){
     if($_SESSION['role'] == 'admin'){
         return true;
     }
@@ -230,7 +229,7 @@ function checkadmin(){
     }
 }
 
-function checkuser($id){
+function checkUser($id){
     if($_SESSION['user_id'] == $id){
         return true;
     }
@@ -239,9 +238,9 @@ function checkuser($id){
     }
 }
 
-function fullcheck($id){
-    if(isloggedin()){
-        if(checkadmin() || checkuser($id)){
+function fullCheck($id){
+    if(isLoggedIn()){
+        if(checkAdmin() || checkUser($id)){
             return true;
         }
         else{
@@ -250,13 +249,13 @@ function fullcheck($id){
     }
 }
 
-function logout($resp_code){
+function logOut($resp_code){
     $log = new dbfunc;
     $log->logActions($resp_code,session_id(),$_GET['action'],$_SESSION['user_id']);
     $_SESSION['loggedin'] = false;
 }
 
-function dayratelimit($limit){
+function dayRateLimit($limit){
     //checks if an initial visit time variable has been initialised, and creates one if it hasn't
     if(isset($_SESSION['lastTime']) == false){
         $_SESSION['lastTime'] = time();
@@ -283,7 +282,7 @@ function dayratelimit($limit){
     }
 }
 
-function secondratelimit($limit){
+function secondRateLimit($limit){
     if(isset($_SESSION['secondlastTime']) == false){
         $_SESSION['secondlastTime'] = time();
         $_SESSION['secondBucket'] = 0;
@@ -304,7 +303,7 @@ function secondratelimit($limit){
     }
 }
 
-function is_correct_origin(){
+function isCorrectOrigin(){
     //HTTP_ORIGIN header
     $origin = $_SERVER["HTTP_REFERER"];
     // Allowed domain names

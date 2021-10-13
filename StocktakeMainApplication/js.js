@@ -1,15 +1,27 @@
-onload();
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('sw.js').then(function(registration) {
+        // Registration was successful
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+        // registration failed :(
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
+ 
+onLoad();
 
 function toggle(){
     $('.ui.sidebar').sidebar('toggle');
-};
+}
 
 $('#email,#firstname,#lastname,#password').keypress(function(){clearErr()});
 
 $('#password').keyup(function(){
-    var pass = document.getElementById('password');
-    var regex = new RegExp('(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%&?])([^</>{}]){8,16}');
-    if(regex.test(pass.value) == false){
+    let pass = document.getElementById('password');
+    let regex = new RegExp('(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%&?])([^</>{}]){8,16}');
+    if(regex.test(pass.value) === false){
         pass.style.border  = '2px solid red';
     }
     else{
@@ -19,9 +31,9 @@ $('#password').keyup(function(){
 });
 
 $('#email').keyup(function(){
-    var pass = document.getElementById('email');
-    var regex = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
-    if(regex.test(pass.value) == false){
+    let pass = document.getElementById('email');
+    let regex = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+    if(regex.test(pass.value) === false){
         pass.style.border  = '2px solid red';
     }
     else{
@@ -31,8 +43,8 @@ $('#email').keyup(function(){
 });
 
 $('#firstname,#lastname').keyup(function(event){
-    var regex = new RegExp('(?=.[A-Za-z])([^0-9$&+,:;=?@#|"_</>.\-^()%!`~]){2,16}');
-    var name = document.getElementById(event.target.id);
+    let regex = new RegExp('(?=.[A-Za-z])([^0-9$&+,:;=?@#|"_</>.\-^()%!`~]){2,16}');
+    let name = document.getElementById(event.target.id);
     if(regex.test(name.value)){
         name.style.border = '';
     }
@@ -42,104 +54,113 @@ $('#firstname,#lastname').keyup(function(event){
 
 });
 
-$('#Logoutbtn').click(function(){
+function logOutBtn(){
     toggle();
-    clearform();
-    setSection('LoginSection');
-    fetch('/php/StocktakeApp/Stocktakeapi/api?action=logout');
-});
+    logOut();
+}
 
-$('#Stockbtn,#Homebtn,#Settingsbtn,#Scanbtn,#Adminbtn').click(function(Event){
-    var target = Event.target.id.replace('btn','');
-    target = target.replace('Iele','');
+function btnSection(id){
+    let target = id.replace('btn','');
     console.log(target);
     setSection(target);
     toggle();
-})
+}
 
-function ApiLogin()
-{
-    if(document.getElementById('email').value == '' || document.getElementById('password').value == ''){
+
+function logOut(){
+    localStorage.setItem('LoggedIn', false);
+    clearForm();
+    setSection('LoginSection');
+    fetch('../Stocktakeapi/api?action=logout');
+}
+
+function apiLogin(){
+    if(document.getElementById('email').value === '' || document.getElementById('password').value === ''){
         newErr('Empty Credentials')
     }
     else{
         clearErr();
-        var spinner = document.getElementById('spinner');
-        var data = new FormData();
+        let data = new FormData();
+        let spinner = document.getElementById('spinner');
         spinner.style.display = 'block';
         data.append('email', document.getElementById('email').value);
         data.append('password', document.getElementById('password').value);
         
-        fetch('/php/StocktakeApp/Stocktakeapi/api?action=login',{method: 'post', body: data})
+        fetch('../Stocktakeapi/api?action=login',{method: 'post', body: data})
         .then(function(res){
-                    if(res.status === 201){
-                        setSection('Home');
-                        getlocations();
-                        clearform();
-                        checkadmin();
-                        currentuser();
-                    }
-                    else if(res.status === 400){
-                        newErr('Invalid Credentials');
-
-                    }
-                    else if(res.status === 429){
-                        newErr('Request Timed Out');
-                        alert('Too many requests sent, connection has been disconnected');
-                    }
-                    else if(res.status === 402){
-                        alert('invalid data');
-                    }
-                    spinner.style.display = 'none';
-                    logdata('login',400);
-                });
+            if(res.status === 201){
+                setSection('Home');
+                getLocations();
+                clearForm();
+                checkAdmin();
+                currentUser();
+                localStorage.setItem('LoggedIn', true);
+            }
+            else if(res.status === 400){
+                newErr('Invalid Credentials');
+                localStorage.setItem('LoggedIn', false);
+            }
+            else if(res.status === 429){
+                newErr('Request Timed Out');
+                alert('Too many requests sent, connection has been disconnected');
+                localStorage.setItem('LoggedIn', false);
+            }
+            else if(res.status === 402){
+                alert('invalid data');
+                localStorage.setItem('LoggedIn', false);
+            }
+            spinner.style.display = 'none';
+        });
     }
 }
 
 function ApiRegister(){
     clearErr()
     console.log("reg start");
-    var data = new FormData();
+    let data = new FormData();
     data.append('password', document.getElementById('password').value);
     data.append('email', document.getElementById('email').value);
     data.append('firstname', document.getElementById('firstname').value);
     data.append('lastname', document.getElementById('lastname').value);
-    clearform();
-    fetch('/php/StocktakeApp/Stocktakeapi/api?action=register',{method: 'post', body: data})
+    clearForm();
+    let spinner = document.getElementById('spinner');
+    spinner.style.display = 'block';
+    fetch('../Stocktakeapi/api?action=register',{method: 'post', body: data})
     .then(function(res){
-                console.log('post resp');
-                if(res.status === 201){
-                    LoginUiSwap('loginui');
-                }
-                else if(res.status === 400){
-                    newErr("Email Taken");
-                }
-                else if(res.status === 401){
-                    newErr('Empty Credentials');
-                }
-                else if(res.status === 500){
-                    newErr('Internal server Error');
-                }
-                else if(res.status === 429){
-                    newErr('Request Timed Out');
-                    alert('Too many requests sent, connection has been disconnected');
-                }
-                else if(res.status === 402){
-                    newErr('invalid data');
-                }
-            }).catch(newErr('Failed Fetch'));
+        console.log('post resp');
+        if(res.status === 201){
+            loginUiSwap('loginui');
+        }
+        else if(res.status === 400){
+            newErr("Email Taken");
+        }
+        else if(res.status === 401){
+            newErr('Empty Credentials');
+        }
+        else if(res.status === 500){
+            newErr('Internal server Error');
+        }
+        else if(res.status === 429){
+            newErr('Request Timed Out');
+            alert('Too many requests sent, connection has been disconnected');
+        }
+        else if(res.status === 402){
+            newErr('invalid data');
+        }
+        spinner.style.display = 'none';
+    }).catch(newErr('Failed Fetch'));
     
 }
 
 
-function LoginUiSwap(ui){
+function loginUiSwap(ui){
     clearErr();
-    clearform();
+    clearForm();
     document.getElementById('registerui').style.display = 'none';
     document.getElementById('loginui').style.display = 'none';
     document.getElementById(ui).style.display = 'block';
 
-    if(document.getElementById('registerui').style.display == 'block'){
+    if(document.getElementById('registerui').style.display === 'block'){
         document.getElementById('firstnameinput').style.display = 'block';
         document.getElementById('lastnameinput').style.display = 'block';
         document.getElementById('LoginHeader').innerHTML = 'Register';
@@ -152,25 +173,38 @@ function LoginUiSwap(ui){
 
 }
 
-function onload(){
+function onLoad(){
     setSection("LoginSection");
-    fetch('/php/StocktakeApp/Stocktakeapi/api?action=isloggedin')
-    .then(function(res){
-        if(res.status === 201){
-            setSection('Home');
-            checkadmin();
-            currentuser();
-            getlocations();
-        }
-        else if(res.status === 429){
-            setSection('LoginSection');
-            newErr('Request Timed Out');
-            alert('Too many requests sent, connection has been disconnected');
-        }
-    })
+    if(!isStayLoggedIn()){
+        logOut();
+    }
+    stayLoggedIn(localStorage.getItem("staylogged"));
+    changeTheme(localStorage.getItem('Theme'));
+    if(localStorage.getItem('LoggedIn') === 'true'){
+        setSection('Home');
+        checkAdmin();
+        currentUser();
+        getLocations();
+    }
+    else{
+        fetch('../Stocktakeapi/api?action=isloggedin')
+        .then(function(res){
+            if(res.status === 201){
+                setSection('Home');
+                checkAdmin();
+                currentUser();
+                getLocations();
+            }
+            else if(res.status === 429){
+                setSection('LoginSection');
+                newErr('Request Timed Out');
+                alert('Too many requests sent, connection has been disconnected');
+            }
+        })
+    }
 }
 
-function clearform(){
+function clearForm(){
     document.getElementById('password').value = '';
     document.getElementById('email').value = '';
     document.getElementById('firstname').value = '';
@@ -197,17 +231,17 @@ function setSection(open){
     document.getElementById('LoginSection').style.display = 'none';
     document.getElementById('Admin').style.display = 'none';
     document.getElementById(open).style.display = 'block';
-    if(open == 'Scan'){
-        startscanner();
+    if(open === 'Scan'){
+        startScanner();
     }
 }
 
-function checkadmin(){
-    fetch('/php/StocktakeApp/Stocktakeapi/api?action=checkadmin')
+function checkAdmin(){
+    fetch('../Stocktakeapi/api?action=checkadmin')
     .then(function(res){
         if(res.status === 201){
            document.getElementById('Adminbtn').style.display = 'block';
-           alluser();
+           allUser();
         }
         else{
             document.getElementById('Adminbtn').style.display = 'none'; 
@@ -215,82 +249,101 @@ function checkadmin(){
     })
 }
 
-function currentuser(){
-    fetch('/php/StocktakeApp/Stocktakeapi/api?action=currentuser')
+function currentUser(){
+    fetch('../Stocktakeapi/api?action=currentuser')
     .then(response => response.json())
-     .then(data => {
-         console.log(data);
-         document.getElementById('currentName').innerHTML = data.firstname +" "+ data.lastname;
-         document.getElementById('currentRole').innerHTML = data.role;
-         document.getElementById('currentDate').innerHTML = data.datecreated;
-         document.getElementById('currentEmail').innerHTML = data.email;
-        });
+    .then(data => {
+        localStorage.setItem("currentUser", JSON.stringify(data));
+        console.log(data);
+        document.getElementById('currentName').innerHTML = data.firstname +" "+ data.lastname;
+        document.getElementById('currentRole').innerHTML = data.role;
+        document.getElementById('currentDate').innerHTML = data.datecreated;
+        document.getElementById('currentEmail').innerHTML = data.email;
+    }).catch(() => {
+        data = JSON.parse(localStorage.getItem("currentUser"));
+        console.log(data);
+        document.getElementById('currentName').innerHTML = data.firstname +" "+ data.lastname;
+        document.getElementById('currentRole').innerHTML = data.role;
+        document.getElementById('currentDate').innerHTML = data.datecreated;
+        document.getElementById('currentEmail').innerHTML = data.email;
+    });
 }
 
-function alluser(){
-    fetch('/php/StocktakeApp/Stocktakeapi/api?action=alluser')
+function allUser(){
+    let spinner = document.getElementById('spinner');
+    spinner.style.display = 'block';
+    fetch('../Stocktakeapi/api?action=alluser')
     .then(response => response.json())
-     .then(data => {
-         console.log(data);
-         document.getElementById('allUsers').innerHTML = '';
-         data.forEach(d => {
-            document.getElementById('allUsers').innerHTML += 
-            `<div class="userlist">
-                <div class="flex" style="justify-content:flex-start;">
-                    <h3 style="margin-right:10px;">Name:</h3>
-                    <div>` + d.firstname +" "+ d.lastname +`</div>
-                </div>
-                <div class="flex" style="justify-content:flex-start;">
-                    <h3 style="margin-right:10px;">Email:</h3>
-                    <div>` + d.email + `</div>
-                </div>
-                <button type='button' class="ui button" onclick="ViewUser('`+d.user_id+`')">Edit</button>
-                <button type='button' class="ui red button" onclick="DeleteUser('`+d.user_id+`')">Delete</button>
-            </div>`;
-         });
+    .then(data => {
+        console.log(data);
+        document.getElementById('allUsers').innerHTML = '';
+        data.forEach(d => {
+        document.getElementById('allUsers').innerHTML += 
+        `<div class="user-list">
+            <div class="flex" style="justify-content:flex-start;">
+                <h3 style="margin-right:10px;">Name:</h3>
+                <div>` + d.firstname +" "+ d.lastname +`</div>
+            </div>
+            <div class="flex" style="justify-content:flex-start;">
+                <h3 style="margin-right:10px;">Email:</h3>
+                <div>` + d.email + `</div>
+            </div>
+            <button type='button' class="ui button" onclick="viewUser('`+d.user_id+`')">Edit</button>
+            <button type='button' class="ui red button" onclick="deleteUser('`+d.user_id+`')">Delete</button>
+        </div>`;
         });
+        spinner.style.display = 'none';
+    });
 }
 
-function ViewUser(id){
+function viewUser(id){
     document.getElementById('allUsers').style.display = 'none';
     document.getElementById('editheader').style.display = 'none';
-    var url = '/php/StocktakeApp/Stocktakeapi/api?action=viewuser&user_id=' + id;
+    let spinner = document.getElementById('spinner');
+    spinner.style.display = 'block';
+    let url = '../Stocktakeapi/api?action=viewuser&user_id=' + id;
     fetch(url)
     .then(response => response.json())
-     .then(data => {
+    .then(data => {
         console.log(data);
         document.getElementById('edituser').style.display = 'block';
         document.getElementById('userFirstname').value = data.firstname;
         document.getElementById('userLastname').value = data.lastname;
         document.getElementById('userEmail').value = data.email;
         document.getElementById('userRole').value = data.role;
-        document.getElementById('editui'). innerHTML += `<button type='button' class="ui button primary" onclick="EditUser(`+id+`)">Save Changes</button>`;
+        document.getElementById('editui'). innerHTML += `<button type='button' class="ui button primary" onclick="editUser(`+id+`)">Save Changes</button>`;
+        spinner.style.display = 'none';
      });
 }
 
-function DeleteUser(id){
-    var url = '/php/StocktakeApp/Stocktakeapi/api?action=deleteuser&user_id=' + id;
+function deleteUser(id){
+    let url = '../Stocktakeapi/api?action=deleteuser&user_id=' + id;
+    let spinner = document.getElementById('spinner');
+    spinner.style.display = 'block';
     fetch(url)
     .then(function(res){
         if(res.status === 201){
-            checkadmin();
+            checkAdmin();
             alert('User deleted');
          }
          else{
             alert('User not deleted');
          }
+         spinner.style.display = 'none';
     });
 }
 
-function locationform(){
+function locationForm(){
     document.getElementById('locationform').style.display = 'block';
     document.getElementById('stockitems').style.display = 'none';
 
 }
 
-function addlocation(){ 
-    var locationname = document.getElementById('LocationName').value;
-    var url = '/php/StocktakeApp/Stocktakeapi/api?action=addlocation&locationname=' +locationname;
+function addLocation(){ 
+    let locationname = document.getElementById('LocationName').value;
+    let url = '../Stocktakeapi/api?action=addlocation&locationname=' +locationname;
+    let spinner = document.getElementById('spinner');
+    spinner.style.display = 'block';
     fetch(url)
     .then(function(res){
         if(res.status === 201){
@@ -299,102 +352,166 @@ function addlocation(){
         else{
             alert('location not added');
         }
-        getlocations();
-        canceladdlocation();
+        spinner.style.display = 'none';
+        getLocations();
+        cancelAddLocation();
     })
 }
 
-function getlocations(){
-    fetch('/php/StocktakeApp/Stocktakeapi/api?action=getlocations')
+function getLocations(){
+    fetch('../Stocktakeapi/api?action=getlocations')
     .then(response => response.json())
-     .then(data => {
-        document.getElementById('stockitems').innerHTML = '<div class="StockItem" onclick="locationform()"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Add New Location</h2></div>';
+    .then(data => {
+        const setTheme = localStorage.getItem('Theme');
+        let theme = setTheme === "DarkMode" ? "Stock-Item-dark" : "Stock-Item";
+        document.getElementById('stockitems').innerHTML = '<div class='+theme+' onclick="locationForm()"><h2 class="ui center aligned header" style="margin-top: 1.7vh;">Add New Location</h2></div>';
         console.log(data);
         data.forEach(d => {
-            document.getElementById('stockitems').innerHTML += `<div class="StockItem" onclick="GetLocationStock(`+d.location_id+`)"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">`+d.location_name+`</h2></div>`;
+            document.getElementById('stockitems').innerHTML += `<div class=`+theme+` onclick="getLocationStock(`+d.location_id+`)"><h2 class="ui center aligned header" style="margin-top: 1.7vh;">`+d.location_name+`</h2></div>`;
         });
-
-     });
+    });
 }
 
-function canceladdlocation(){
+function cancelAddLocation(){
     document.getElementById('locationform').style.display = 'none';
     document.getElementById('stockitems').style.display = 'block';
     document.getElementById('LocationName').value = '';
 }
 
-function GetLocationStock(location){
-    var url = '/php/StocktakeApp/Stocktakeapi/api?action=getlocationstock&location='+ location;
+function getLocationStock(location){
+    let url = '../Stocktakeapi/api?action=getlocationstock&locationid='+ location;
+    let spinner = document.getElementById('spinner');
+    spinner.style.display = 'block';
     fetch(url)
-        .then(response => response.json())
-            .then(data => {
-                for (let i = 0; i < data.length; i++) {
-                    attributes = JSON.parse(data[i].attributes);
-                    for (const [key, value] of Object.entries(attributes)) {
-                        console.log(`${key}: ${value}`);
-                      }
-                    console.log(attributes);
-                    document.getElementById('locationstock').innerHTML +=  
-                    `<div class="StockItem">
-                        <h2 class="ui center aligned header" style="margin-top: 1.5vh;">`
-                        + attributes.name+": "+data[i].stock_amount+
-                        `</h2>
-                    </div>`           
-                }
-                document.getElementById('locationstock').innerHTML += `<button type='button' class="ui button center aligned" style="width:80vw;margin:10vw;" onclick="leavelocation()">Back</button>`;
-                document.getElementById('stockitems').style.display = 'none';
-                document.getElementById('locationstock').style.display = 'block';
-                document.getElementById('stocksidebar').style.display = 'none';
-                console.log(data);
-            });
+    .then(response => response.json())
+    .then(data => {
+        const setTheme = localStorage.getItem('Theme');
+        let theme = setTheme === "DarkMode" ? "Stock-Item-dark" : "Stock-Item";
+        for (let i = 0; i < data.length; i++) {
+            attributes = JSON.parse(data[i].attributes);
+            for (const [key, value] of Object.entries(attributes)) {
+                console.log(`${key}: ${value}`);
+            }
+            console.log(attributes);
+            document.getElementById('locationstock').innerHTML +=  
+            `<div class=`+theme+`>
+                <h2 class="ui center aligned header" style="margin-top: 1.5vh;">`
+                + attributes.name+": "+data[i].stock_amount+
+                `</h2>
+            </div>`           
+        }
+        document.getElementById('locationstock').innerHTML += `<button type='button' class="ui button center aligned" style="width:80vw;margin:10vw;" onclick="leaveLocation()">Back</button>`;
+        document.getElementById('stockitems').style.display = 'none';
+        document.getElementById('locationstock').style.display = 'block';
+        document.getElementById('stocksidebar').style.display = 'none';
+        spinner.style.display = 'none';
+        console.log(data);
+    });
 }
 
-function leavelocation(){
+function leaveLocation(){
     document.getElementById('locationstock').innerHTML = '';
     document.getElementById('stockitems').style.display = 'block';
     document.getElementById('locationstock').style.display = 'none';
     document.getElementById('stocksidebar').style.display = 'block';
 }
 
-function EditUser(id){
+function editUser(id){
 //a function to edit a user will need to check if admin if user_id doesnt equal logged in user
     console.log(id);
-    var data = new FormData();
+    let data = new FormData();
     data.append('email', document.getElementById('userEmail').value);
     data.append('firstname', document.getElementById('userFirstname').value);
     data.append('lastname', document.getElementById('userLastname').value);
     data.append('role', document.getElementById('userRole').value);
-    var url = '/php/StocktakeApp/Stocktakeapi/api?action=edituser&id=' + id;
+    let url = '../Stocktakeapi/api?action=edituser&id=' + id;
+    let spinner = document.getElementById('spinner');
+    spinner.style.display = 'block';
     fetch(url,{method: 'post', body: data})
     .then(function(res){
-        checkadmin();
-        CancelEdit();
+        checkAdmin();
+        cancelEdit();
         if(res.status === 201){
             alert('user edited');
-         }
-         else{
+        }
+        else{
             alert('Edit failed');
-         }
+        }
+        spinner.style.display = 'none';
     });
 }
 
-function CancelEdit(){
+function cancelEdit(){
     document.getElementById('edituser').style.display = 'none';
-    document.getElementById('editui'). innerHTML = `<button type='button' class="ui button secondary" onclick="CancelEdit()">Cancel</button>`;
+    document.getElementById('editui'). innerHTML = `<button type='button' class="ui button secondary" onclick="cancelEdit()">Cancel</button>`;
     document.getElementById('userFirstname').value = '';
     document.getElementById('userLastname').value = '';
     document.getElementById('userEmail').value = '';
     document.getElementById('userRole').value = '';
     document.getElementById('allUsers').style.display = 'block';
-    document.getElementById('editheader').style.display = 'block';
+    document.getElementById('editheader').style.display = 'flex';
+}
+
+function changeTheme(id){
+    if(id !=="LightMode" && id !== "DarkMode"){
+        id = "LightMode";
+    }
+    localStorage.setItem('Theme', id);
+    document.getElementById("LightMode").className = "ui button";
+    document.getElementById("DarkMode").className = "ui button";
+    document.getElementById(id).className = "ui positive button";
+    if(id === "DarkMode"){
+        document.getElementById("pusher").className = "pusher pusher-dark-style";
+        document.getElementById("body").className = "body-dark pushable";
+        document.getElementById("loginform").className = "ui form generic-form-dark";
+        document.getElementById("editform").className = "ui form generic-form-dark";
+        document.getElementById("locationform").className = "ui form location-form-dark";
+    }
+    else if(id === "LightMode"){
+        document.getElementById("pusher").className = "pusher pusher-style";
+        document.getElementById("body").className = "body pushable";
+        document.getElementById("loginform").className = "ui form generic-form";
+        document.getElementById("editform").className = "ui form generic-form";
+        document.getElementById("locationform").className = "ui form location-form";
+
+    }
+    getLocations();
+
+}
+
+function stayLoggedIn(id = '0'){
+    if(id !=="StayLog" && id !== "NoLog"){
+        id = "StayLog";
+    }
+    localStorage.setItem('staylogged', id);
+    document.getElementById("StayLog").className = "ui button";
+    document.getElementById("NoLog").className = "ui button";
+    document.getElementById(id).className = "ui positive button";
+}
+
+function isStayLoggedIn(){
+    let logged = localStorage.getItem('staylogged');
+    if(logged === ''){
+        stayLoggedIn('StayLog');
+        logged = 'StayLog';
+    }
+    document.getElementById("StayLog").className = "ui button";
+    document.getElementById("NoLog").className = "ui button";
+    document.getElementById(logged).className = "ui positive button";
+    if(logged === "StayLog"){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 
 
 //section for scanning
 
-function startscanner(){
-    var video = document.querySelector("#videoElement");
+function startScanner(){
+    let video = document.querySelector("#videoElement");
 
     if (navigator.mediaDevices.getUserMedia){
         h = window.innerHeight;

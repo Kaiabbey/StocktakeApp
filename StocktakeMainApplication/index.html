@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head id="head">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,68 +9,73 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src='js.js' defer></script>
-    <title>Document</title>
+    <title>Stocktake App</title>
+    <link rel="shortcut icon" href="./icon.png"/>
 </head>
-<body>
-    <div id='spinner' class='spinbox'>
+<body id="body" class="body-light">
+    <div id='spinner' class='spin-box'>
         <div class="loader">Loading...</div>
     </div>
     <div class="ui left vertical inverted sidebar labeled icon menu">
-        <a id='Homebtn' class="item">
+        <a id='Homebtn' onclick="btnSection(this.id)" class="item">
             <i id='HomeIele' class="home icon"></i>
             Home
         </a>
-        <a id='Stockbtn' class="item">
+        <a id='Stockbtn' onclick="btnSection(this.id)" class="item">
             <i id='StockIele' class="block layout icon"></i>
             Stock
         </a>
-        <a id='Scanbtn' class="item">
+        <a id='Scanbtn' onclick="btnSection(this.id)" class="item">
             <i id='ScanIele' class="barcode icon"></i>
             Scan Item
         </a>
-        <a id='Settingsbtn' class="item">
+        <a id='Settingsbtn' onclick="btnSection(this.id)" class="item">
             <i id='SettingsIele' class="cogs icon"></i>
             Settings
         </a>
-        <a id='Adminbtn' class="item">
+        <a id='Adminbtn' onclick="btnSection(this.id)" class="item">
             <i id='AdminIele' class="cogs icon"></i>
             Admin panel
         </a>
-        <a id='Logoutbtn' class="item">
+        <a id='Logoutbtn' onclick="logOutBtn()" class="item">
             <i id='LogoutIele' class="sign out alternate icon"></i>
             Logout
         </a>
     </div>
-    <div class="pusher">
-        <section id='LoginSection' class='logincontainer'>
-            <form id='loginform' class="ui form">
-                <h2 id='LoginHeader'>Login</h2>
+    <div id="pusher" class="pusher pusher-style">
+        <section id='LoginSection' class='login-container'>
+            <form id='loginform' class="ui form generic-form">
+                <div class="flex">
+                    <h2 id='LoginHeader'>Login</h2>
+                    <i class="big user icon"></i>
+                </div>
                 <div id='emailinput' class="field">
-                    <label>Email:</label>
-                    <input type='text' id='email'></input>
+                    <label>Email:<i class="envelope icon"></i></label>
+                    <input type='text' id='email'>
+                    
                 </div>
                 <div id='firstnameinput' class="field register">
                     <label>First name:</label>
-                    <input type='text' id='firstname'></input>
+                    <input type='text' id='firstname'>
                 </div>
                 <div id='lastnameinput' class="field register">
                     <label>Last name:</label>
-                    <input type='text'  id='lastname'></input>
+                    <input type='text'  id='lastname'>
                 </div>
                 <div class="field">
-                <label>Password:</label>
-                <input type='text' id='password'></input>
+                <label>Password:<i class="key icon"></i></label>
+                <input type='text' id='password'>
                 </div>
                 <div class="field">
                     <h3 id='login_err' class='error'>Invalid Login Details</h3>
                 </div>
                 <div id='loginui' class='field loginui'>
-                    <button type='button' class="ui button" onclick="ApiLogin()">Login</button>
-                    <button type='button' class="ui button" onclick="LoginUiSwap('registerui')">Register Account</button>
+                    <button type='button' class="ui button" onclick="apiLogin()">Login</button>
+                    <button type='button' class="ui button" onclick="loginUiSwap('registerui')">Register Account</button>
                 </div>
-                <div id='registerui' class='field registerui'>
-                    <button type='button' class="ui button" onclick="ApiRegister()">Register</button>
-                    <button type='button' class="ui button" onclick="LoginUiSwap('loginui')">Login Instead</button>
+                <div id='registerui' class='field register-ui'>
+                    <button type='button' class="ui button" onclick="apiRegister()">Register</button>
+                    <button type='button' class="ui button" onclick="loginUiSwap('loginui')">Login Instead</button>
                 </div>
             </form>
         </section>
@@ -99,27 +104,27 @@
                     <i class="bars icon"></i>
                 </button>
             </div>
-            <form id='locationform' class="ui form locationform">
+            <form id='locationform' class="ui form location-form">
                 <div class="field">
-                    <label>Location Name</label>
+                    <label>Location Name: <i class="large map marked alternate icon"></i></label>
                     <input type='text' id='LocationName'></input>
                     <div style="margin-top:10px;">
-                        <button type="button" class="ui secondary button" onclick="canceladdlocation()">
+                        <button type="button" class="ui secondary button" onclick="cancelAddLocation()">
                             cancel
                         </button>
-                        <button type="button" class="ui button" onclick="addlocation()">
+                        <button type="button" class="ui button" onclick="addLocation()">
                             Add
                         </button>
                     </div>
                 </div>
             </form>
             <div id='stockitems' class="container">
-                <div class="StockItem" onclick="locationform()"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Add New Location</h2></div>
+                <div class="Stock-Item" onclick="locationForm()"><h2 class="ui center aligned header" style="margin-top: 1.5vh;">Add New Location</h2></div>
             </div> 
             <div id="locationstock" style="display: none;"></div> 
         </section>
         <section id='Scan' class='scan'>
-            <div class="flex overtop">
+            <div class="flex over-top">
                 <h2 class='ui header'>
                     <i class="barcode icon"></i>
                     <div class="content">
@@ -161,6 +166,19 @@
                     <h3>Email:</h3>
                     <div id='currentEmail'></div>
                 </div>
+                <div class="ui buttons">
+                    <button id="LightMode" class="ui positive button" onclick="changeTheme(this.id)">Light</button>
+                    <div class="or"></div>
+                    <button id="DarkMode" class="ui button" onclick="changeTheme(this.id)">Dark</button>
+                </div>
+                <div class="flex">
+                    <h3>Stay Logged in?</h3>
+                </div>
+                <div class="ui buttons">
+                    <button id="NoLog" class="ui button" onclick="stayLoggedIn(this.id)">No</button>
+                    <div class="or"></div>
+                    <button id="StayLog" class="ui positive button" onclick="stayLoggedIn(this.id)">Yes</button>
+                </div>
             </div>
         </section>
         <section id='Admin' class='Admin'>
@@ -176,30 +194,30 @@
                 </button>  
             </div>
             <div id='allUsers'></div>
-            <div class="edituser" id='edituser'>
-                <form id='editform' class="ui form editform">
+            <div class="edit-user" id='edituser'>
+                <form id='editform' class="ui form generic-form">
                     <h2>Edit User</h2>
                     <div class="field">
-                        <label>Email:</label>
-                        <input type='text' id='userEmail'></input>
+                        <label>Email:<i class="envelope outline icon"></i></label>
+                        <input type='text' id='userEmail'>
                     </div>
                     <div class="field">
                         <label>First Name:</label>
-                        <input type='text' id='userFirstname'></input>
+                        <input type='text' id='userFirstname'>
                     </div>
                     <div class="field">
                         <label>Last Name:</label>
-                        <input type='text' id='userLastname'></input>
+                        <input type='text' id='userLastname'>
                     </div>
                     <div class="field">
-                        <label>Role:</label>
-                        <input type='text' id='userRole'></input>
+                        <label>Role:<i class="user tag icon"></i></label>
+                        <input type='text' id='userRole'>
                     </div>
                     <div class="field">
                         <h3 id='edit_err' class='error'>Invalid Login Details</h3>
                     </div>
                     <div id='editui' class='field loginui'>
-                        <button type='button' class="ui button secondary" onclick="CancelEdit()">Cancel</button>
+                        <button type='button' class="ui button secondary" onclick="cancelEdit()">Cancel</button>
                     </div>
                 </form>
             </div>

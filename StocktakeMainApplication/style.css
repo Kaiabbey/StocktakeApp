@@ -1,12 +1,24 @@
-body{
+.body-light{
     background: #0A7193; 
 }
 
-body.pushable > .pusher {
+.body-dark{
+  background: dimgrey; 
+}
+
+body.pushable > .pusher-style {
     background: #0A7193; 
 }
 
-.logincontainer{
+body.pushable > .pusher-dark-style {
+  background: dimgrey; 
+}
+
+div{
+  color: inherit;
+}
+
+.login-container{
     height: 100vh;
 }
 
@@ -19,15 +31,33 @@ input{
     z-index: 2;
 }
 
-.userlist{
+.user-list{
   margin: 10px;
 }
 
-.locationform{
+.location-form{
   display: none;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  padding: 10px;
+  width: 82vw;
+  margin-top: 10vw;
+  margin-left: 9vw;
+  z-index: 1;
 }
 
-form{
+.location-form-dark{
+  display: none;
+  background-color: lightslategray;
+  border-radius: 4px;
+  padding: 10px;
+  width: 82vw;
+  margin-top: 10vw;
+  margin-left: 9vw;
+  z-index: 1;
+}
+
+.generic-form{
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 4px;
     padding: 10px;
@@ -37,7 +67,17 @@ form{
     z-index: 1;
 }
 
-.edituser{
+.generic-form-dark{
+  background-color: lightslategray;
+  border-radius: 4px;
+  padding: 10px;
+  width: 82vw;
+  margin-top: 10vw;
+  margin-left: 9vw;
+  z-index: 1;
+}
+
+.edit-user{
   display: none;
 }
 
@@ -60,7 +100,7 @@ section{
   max-height: 100vh;
 }
 
-.registerui{
+.register-ui{
     display: none;
 }
 
@@ -73,7 +113,7 @@ section{
     display:none;
 }
 
-.StockItem{
+.Stock-Item{
     width: 100vw;
     height: 10vh;
     background-color: #10a2d3;
@@ -83,14 +123,24 @@ section{
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.overtop{
+.Stock-Item-dark{
+  width: 100vw;
+  height: 10vh;
+  background-color: dimgray;
+  border: 1px solid rgba(16,162,211, .5);
+  -moz-box-shadow: inset 0 0 10px rgba(16, 162, 211, 0.5);
+  -webkit-box-shadow: inset 0 0 10px rgba(16, 162, 211, 0.5);
+  box-shadow: inset 0 0 10px rgba(16, 162, 211, 0.5);
+}
+
+.over-top{
   position: fixed;
   width: 100vw;
 }
 
 /* code for spinner start */
 
-.spinbox{
+.spin-box{
     z-index: 5;
     position: absolute;
     left: 48.5vw;
