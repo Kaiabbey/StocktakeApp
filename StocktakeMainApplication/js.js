@@ -8,7 +8,9 @@ if ('serviceWorker' in navigator) {
         console.log('ServiceWorker registration failed: ', err);
       });
     });
+    console.log('test')
   }
+console.log('test2')
  
 onLoad();
 
@@ -76,7 +78,7 @@ function logOut(){
 
 function apiLogin(){
     if(document.getElementById('email').value === '' || document.getElementById('password').value === ''){
-        newErr('Empty Credentials')
+        newErr('Empty Credentials');
     }
     else{
         clearErr();
