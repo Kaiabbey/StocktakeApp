@@ -37,11 +37,11 @@ and what theme they want to use.
 
 I want to add better functionality for features in regards to stock management and reports, future features can include:
 	<p>- Search feature for stock items in locations</p>
-	- pre-populating form data when new barcodes are scanned based on data from other users 
+	<p>- pre-populating form data when new barcodes are scanned based on data from other users 
 	  i.e if one user has a coca cola bottle item with an associated barcode then another user scans the same
-	  Barcode it will check the database for items with the same barcode and offer attribute options
-	- better integration of errors and popups not using integrated chrome alerts
-	- A more custom ui design for the scanner i.e removal of ugly preset elements, animation to show scanning
+	  Barcode it will check the database for items with the same barcode and offer attribute options</p>
+	<p>- better integration of errors and popups not using integrated chrome alerts</p>
+	<p>- A more custom ui design for the scanner i.e removal of ugly preset elements, animation to show scanning</p>
 
 
 <h2>Why Documentation is important</h2>
