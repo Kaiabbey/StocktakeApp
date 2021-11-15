@@ -7,6 +7,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/bouncer/dist/bouncer.polyfills.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src='js.js' defer></script>
     <title>Stocktake App</title>
@@ -18,7 +20,7 @@
         <div class="loader">Loading...</div>
     </div>
     <div class="ui left vertical inverted sidebar labeled icon menu">
-        <a id='Homebtn' onclick="btnSection(this.id)" class="item">
+        <a id='Homebtn' onclick="btnSection(this.id);getStockObjects();" class="item">
             <i id='HomeIele' class="home icon"></i>
             Home
         </a>
@@ -42,6 +44,10 @@
             <i id='LogoutIele' class="sign out alternate icon"></i>
             Logout
         </a>
+        <a id='Helpbtn' onclick="btnSection(this.id)" class="item">
+            <i id='HelpIele' class="question circle outline icon"></i>
+            Help
+        </a>
     </div>
     <div id="pusher" class="pusher pusher-style">
         <section id='LoginSection' class='login-container'>
@@ -52,27 +58,22 @@
                 </div>
                 <div id='emailinput' class="field">
                     <label>Email:<i class="envelope icon"></i></label>
-                    <input type='text' id='email'>
-                    <p id="email_err"></p>
+                    <input type='email' name="email" id='email' required>
                 </div>
                 <div id='firstnameinput' class="field register">
                     <label>First name:</label>
-                    <input type='text' id='firstname'>
-                    <p id="firstname_err"></p>
+                    <input type='text' minlength="2" name="first-name" id='firstname' required>
                 </div>
                 <div id='lastnameinput' class="field register">
                     <label>Last name:</label>
-                    <input type='text'  id='lastname'>
-                    <p id="lastname_err"></p>
+                    <input type='text' minlength="2" name="last-name"  id='lastname' required>
                 </div>
                 <div class="field">
                 <label>Password:<i class="key icon"></i></label>
-                <input type='password' id='password'>
-                <p id="password_err"></p>
+                <input type='password' id='password' pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%&?])([^</>{}]){8,16}">
                 </div>
                 <div class="field">
-                    <h3 id='login_err' class='error'>Invalid Login Details</h3>
-                    <p id='second_err'></p>
+                    <h3 id='login_err' class='customerror'>Invalid Login Details</h3>
                 </div>
                 <div id='loginui' class='field loginui'>
                     <button type='button' class="ui button" onclick="apiLogin()">Login</button>
@@ -96,6 +97,27 @@
                     <i class="bars icon"></i>
                 </button>  
             </div>
+            <div id="HomeStockObjects">
+
+            </div>
+            <form id='editStockObjectForm' class="ui form add-stock-form">
+                <div class="field">
+                    <div id ="EditAttributes">
+                        <!--Js.js populates Attributes from fetch-->
+                    </div>
+                    <div id="editItemButtons" style="margin-top:10px;display: flex;">
+                        <!--<button  type="button" class="ui green button" onclick="addNewAttribute('EditAttributes')">
+                            New Attribute
+                        </button>-->
+                        <button type="button" class="ui secondary button" onclick="cancelEditItem()">
+                            cancel
+                        </button>
+                        <!--<button type="button" class="ui yellow button" onclick="editItem()">
+                            Edit
+                        </button>-->
+                    </div>
+                </div>
+            </form>
         </section>
         <section id='Stock' class='Stock'>
             <div class="flex">
@@ -112,7 +134,7 @@
             <form id='locationform' class="ui form location-form">
                 <div class="field">
                     <label>Location Name: <i class="large map marked alternate icon"></i></label>
-                    <input type='text' id='LocationName'></input>
+                    <input type='text' minlength="2" id='LocationName' name="Location-Name" required>
                     <div style="margin-top:10px;">
                         <button type="button" class="ui secondary button" onclick="cancelAddLocation()">
                             cancel
@@ -129,18 +151,71 @@
             <div id="locationstock" style="display: none;"></div> 
         </section>
         <section id='Scan' class='scan'>
-            <div class="flex over-top">
+            <div id="ScanHeader" class="flex over-top">
                 <h2 class='ui header'>
                     <i class="barcode icon"></i>
                     <div class="content">
                         Scan
                     </div>
                 </h2>
-                <button class="ui button" onclick="toggle()">
+                <button class="ui button scannerbutton" onclick="toggle()">
                     <i class="bars icon"></i>
                 </button>  
             </div>
-            <video autoplay="true" id="videoElement"></video>
+            <form id='newStockObjectForm' class="ui form add-stock-form">
+                <div class="field">
+                    <label>Stock Item Name: <i class="list icon"></i></label>
+                    <input type='text' minlength="2" id='StockItemName' required>
+                    <h2>Barcode Number:</h2>
+                    <label id="barcodeNumber"></label>
+                    <div id ="newAttributes">
+                        <!--Js.js adds new inputs dynamically-->
+                    </div>
+                    <div style="margin-top:10px;">
+                        <button type="button" class="ui green button" onclick="addNewAttribute('newAttributes')">
+                            New Attribute
+                        </button>
+                        <button type="button" class="ui secondary button" onclick="cancelAddNewItem()">
+                            cancel
+                        </button>
+                        <button type="button" class="ui button" onclick="addNewItem()">
+                            Add
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <form id='addOrRemoveStock' class="ui form add-stock-form">
+                <div class="field">
+                    <div class="ui labeled input">
+                        <div class="ui label">Change Stock In</div>
+                        <select id="locationDropdown" style="padding: 0 5px;" class="ui selection dropdown">
+                            
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <h3 id="barcodeHeader"></h3>
+                </div>
+                <div class="field flex">
+                    <button type="button" style="margin:10px" class="ui red button" onclick="minusOne()"><h1>-</h1></button>
+                    <input type="number" style="  text-align: center;font-size: xxx-large;font-weight: bolder;padding: 0;" class="counter" id="stockCountUpdater" value=0 >
+                    <button type="button" style="margin:10px" class="ui green button" onclick="plusOne()"><h1>+</h1></button>
+                </div>
+                <div class="field">
+                    <div style="margin-top:10px;">
+                        <button type="button" class="ui green button" onclick="changeStock('remove')">
+                            remove
+                        </button>
+                        <button type="button" class="ui secondary button" onclick="cancelUpdateStock()">
+                            cancel
+                        </button>
+                        <button type="button" class="ui button" onclick="changeStock('add')">
+                            Add
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div id="qr-reader" class="Scanner""></div>
         </section>
         <section id='Settings' class='Settings'>
             <div class="flex">
@@ -186,45 +261,31 @@
                 </div>
             </div>
         </section>
-        <section id='Admin' class='Admin'>
-            <div id='editheader' class="flex">
+        <section id='Admin' class='admin'>
+            <div id="root">
+                <!--THIS IS WHERE REACT INJECTS ALL THE ADMIN CODE!!!-->
+            </div>
+        </section>
+        <section id='Help'>
+            <div class="flex">
                 <h2 class='ui header'>
-                    <i class="barcode icon"></i>
+                    <i class="question circle outline icon"></i>
                     <div class="content">
-                        Admin
+                        Help
                     </div>
                 </h2>
                 <button class="ui button" onclick="toggle()">
                     <i class="bars icon"></i>
                 </button>  
             </div>
-            <div id='allUsers'></div>
-            <div class="edit-user" id='edituser'>
-                <form id='editform' class="ui form generic-form">
-                    <h2>Edit User</h2>
-                    <div class="field">
-                        <label>Email:<i class="envelope outline icon"></i></label>
-                        <input type='text' id='userEmail'>
-                    </div>
-                    <div class="field">
-                        <label>First Name:</label>
-                        <input type='text' id='userFirstname'>
-                    </div>
-                    <div class="field">
-                        <label>Last Name:</label>
-                        <input type='text' id='userLastname'>
-                    </div>
-                    <div class="field">
-                        <label>Role:<i class="user tag icon"></i></label>
-                        <input type='text' id='userRole'>
-                    </div>
-                    <div class="field">
-                        <h3 id='edit_err' class='error'>Invalid Login Details</h3>
-                    </div>
-                    <div id='editui' class='field loginui'>
-                        <button type='button' class="ui button secondary" onclick="cancelEdit()">Cancel</button>
-                    </div>
-                </form>
+            <div>
+                <img src="Sidebar.png">
+                <img src="Home.png">
+                <img src="Item.png">
+                <img src="Locations.png">
+                <img src="Add_Location.png">
+                <img src="Scan.png">
+                <img src="Settings.png">
             </div>
         </section>
     </div>

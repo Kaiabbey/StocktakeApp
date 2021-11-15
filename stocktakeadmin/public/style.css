@@ -14,6 +14,7 @@ body.pushable > .pusher-dark-style {
   background: dimgrey; 
 }
 
+
 div{
   color: inherit;
 }
@@ -26,6 +27,15 @@ button{
     filter: drop-shadow(3px 3px 2px);
 }
 
+.Scanner{
+  width: 100vw;
+  height: 100vh;
+}
+
+.scannerbutton{
+  z-index: 10;
+}
+
 input{
     filter: drop-shadow(2px 2px 2px );
     z-index: 2;
@@ -33,6 +43,13 @@ input{
 
 .user-list{
   margin: 10px;
+}
+
+img{
+  width: 90vw;
+  height: fit-content;
+  margin: 4vw;
+  border: black solid 2vw;
 }
 
 .location-form{
@@ -77,6 +94,30 @@ input{
   z-index: 1;
 }
 
+.add-stock-form{
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  padding: 10px;
+  width: 82vw;
+  margin-top: 10vw;
+  margin-left: 9vw;
+  margin-bottom: 9vw;
+  z-index: 1;
+  display: none;
+}
+
+.add-stock-form-dark{
+  background-color: lightslategray;
+  border-radius: 4px;
+  padding: 10px;
+  width: 82vw;
+  margin-top: 10vw;
+  margin-left: 9vw;
+  margin-bottom: 9vw;
+  z-index: 1;
+  display: none;
+}
+
 .edit-user{
   display: none;
 }
@@ -96,9 +137,22 @@ section{
   min-height: 100vh;
 }
 
-.scan{
-  max-height: 100vh;
+/**
+ * Form Validation Errors
+ */
+ .error {
+	border-color: red;
 }
+
+.error-message {
+	color: red;
+	font-style: italic;
+	margin-bottom: 1em;
+}
+
+/* .scan{
+  max-height: 100vh;
+} */
 
 .register-ui{
     display: none;
@@ -108,9 +162,17 @@ section{
     display: none;
 }
 
-.error{
+.customerror{
     color: red;
     display:none;
+}
+
+.user-panel{
+  justify-content:flex-start;
+}
+
+.user-panel > h3{
+  margin-right:10px;
 }
 
 .Stock-Item{
@@ -134,7 +196,7 @@ section{
 }
 
 .over-top{
-  position: fixed;
+  /*position: fixed;*/
   width: 100vw;
 }
 

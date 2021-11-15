@@ -1,4 +1,4 @@
-const cacheName = 'v2';
+const cacheName = 'v3';
 
 const cacheAssets = [
     'js.js',
@@ -9,7 +9,6 @@ const cacheAssets = [
     'icon-512x512.png',
     'manifest.json',
     'index.html',
-    '../StocktakeMainApplication/',
 ]
 
 // Call install event
