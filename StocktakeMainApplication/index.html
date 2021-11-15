@@ -53,22 +53,26 @@
                 <div id='emailinput' class="field">
                     <label>Email:<i class="envelope icon"></i></label>
                     <input type='text' id='email'>
-                    
+                    <p id="email_err"></p>
                 </div>
                 <div id='firstnameinput' class="field register">
                     <label>First name:</label>
                     <input type='text' id='firstname'>
+                    <p id="firstname_err"></p>
                 </div>
                 <div id='lastnameinput' class="field register">
                     <label>Last name:</label>
                     <input type='text'  id='lastname'>
+                    <p id="lastname_err"></p>
                 </div>
                 <div class="field">
                 <label>Password:<i class="key icon"></i></label>
                 <input type='password' id='password'>
+                <p id="password_err"></p>
                 </div>
                 <div class="field">
                     <h3 id='login_err' class='error'>Invalid Login Details</h3>
+                    <p id='second_err'></p>
                 </div>
                 <div id='loginui' class='field loginui'>
                     <button type='button' class="ui button" onclick="apiLogin()">Login</button>

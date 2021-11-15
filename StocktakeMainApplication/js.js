@@ -10,7 +10,7 @@ if ('serviceWorker' in navigator) {
     });
     console.log('test')
   }
-console.log('test2')
+console.log('test2');
  
 onLoad();
 
@@ -23,11 +23,14 @@ $('#email,#firstname,#lastname,#password').keypress(function(){clearErr()});
 $('#password').keyup(function(){
     let pass = document.getElementById('password');
     let regex = new RegExp('(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%&?])([^</>{}]){8,16}');
+    let err = document.getElementById('password_err');
     if(regex.test(pass.value) === false){
         pass.style.border  = '2px solid red';
+        err.innerHTML = 'Password requires atleast 1 Uppercase, Lowercase, number, and special character';
     }
     else{
         pass.style.border  = '';
+        err.innerHTML = '';
     }
 
 });
@@ -35,23 +38,44 @@ $('#password').keyup(function(){
 $('#email').keyup(function(){
     let pass = document.getElementById('email');
     let regex = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+    let err = document.getElementById('email_err');
     if(regex.test(pass.value) === false){
         pass.style.border  = '2px solid red';
+        err.innerHTML = 'Please enter valid email';
     }
     else{
         pass.style.border  = '';
+        err.innerHTML = '';
     }
 
 });
 
-$('#firstname,#lastname').keyup(function(event){
+$('#lastname').keyup(function(event){
     let regex = new RegExp('(?=.[A-Za-z])([^0-9$&+,:;=?@#|"_</>.\-^()%!`~]){2,16}');
     let name = document.getElementById(event.target.id);
+    let err = document.getElementById('lastname_err');
     if(regex.test(name.value)){
         name.style.border = '';
+        err.innerHTML = '';
     }
     else{
         name.style.border  = '2px solid red';
+        err.innerHTML = 'Requires Atleast 2 characters';
+    }
+
+});
+
+$('#firstname').keyup(function(event){
+    let regex = new RegExp('(?=.[A-Za-z])([^0-9$&+,:;=?@#|"_</>.\-^()%!`~]){2,16}');
+    let name = document.getElementById(event.target.id);
+    let err = document.getElementById('firstname_err');
+    if(regex.test(name.value)){
+        name.style.border = '';
+        err.innerHTML = '';
+    }
+    else{
+        name.style.border  = '2px solid red';
+        err.innerHTML = 'Requires Atleast 2 characters';
     }
 
 });
@@ -99,7 +123,7 @@ function apiLogin(){
                 localStorage.setItem('LoggedIn', true);
             }
             else if(res.status === 400){
-                newErr('Invalid Credentials');
+                newErr("Email or Pass Doesn't exist");
                 localStorage.setItem('LoggedIn', false);
             }
             else if(res.status === 429){
@@ -107,8 +131,8 @@ function apiLogin(){
                 alert('Too many requests sent, connection has been disconnected');
                 localStorage.setItem('LoggedIn', false);
             }
-            else if(res.status === 402){
-                alert('invalid data');
+            else if(res.status === 406){
+                newErr('Invalid Email or Pass');
                 localStorage.setItem('LoggedIn', false);
             }
             spinner.style.display = 'none';
@@ -116,7 +140,7 @@ function apiLogin(){
     }
 }
 
-function ApiRegister(){
+function apiRegister(){
     clearErr()
     console.log("reg start");
     let data = new FormData();
@@ -146,8 +170,8 @@ function ApiRegister(){
             newErr('Request Timed Out');
             alert('Too many requests sent, connection has been disconnected');
         }
-        else if(res.status === 402){
-            newErr('invalid data');
+        else if(res.status === 406){
+            newErr('invalid Form Data');
         }
         spinner.style.display = 'none';
     }).catch(newErr('Failed Fetch'));
@@ -216,13 +240,15 @@ function clearForm(){
 
 function clearErr(){
     document.getElementById('login_err').style.display = 'none';
+    document.getElementById('second_err').innerHTML = '';
     document.getElementById('loginform').style.border = '';
 }
 
-function newErr(response){
+function newErr(response,secondresp=''){
     document.getElementById('loginform').style.border = '1.5px solid red';
     document.getElementById('login_err').style.display = 'block';
     document.getElementById('login_err').innerHTML = response;
+    document.getElementById('second_err').innerHTML = secondresp;
 }
 
 function setSection(open){

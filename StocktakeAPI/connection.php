@@ -5,9 +5,14 @@ class connection{
 
     // the main function for connecing our model and controls to the database
     public function connectdb(){
+        // localhost credentials 
         $dsn = 'mysql:dbname=stocktakeapp;host=localhost;port=3306;';
         $user_name = 'root';
         $password = '';
+        // live credentials
+        // $dsn = 'mysql:dbname=kaiabbe1_StocktakeApp;host=kaiabbey.work;port=3306;';
+        // $user_name = 'kaiabbe1_kai';
+        // $password = '!Might52Bird';
         try{
             $pdo = new pdo($dsn,$user_name,$password);
         }
@@ -74,7 +79,7 @@ class dbFunc{
     function fetchAllUsers(){
         $conn = new connection;
         $pdo = $conn->connectdb();
-        $query = "SELECT `firstname`, `lastname`, `email`, `user_id` FROM users";
+        $query = "SELECT `firstname`, `lastname`, `email`, `user_id`, `role` FROM users";
         $stmt = $pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchall(PDO::FETCH_ASSOC);
@@ -203,6 +208,140 @@ class dbFunc{
         $stmt->bindparam(":loc",$_GET['locationid']);
         $stmt->execute();
         return $stmt->fetchall(PDO::FETCH_ASSOC);
+    }
+
+    function createNewStockObject($id){
+        extract($_POST);
+        $conn = new connection;
+        $pdo = $conn->connectdb();
+        $query = 'SELECT COUNT(*) FROM `stock_object` WHERE `user_id` = :id AND `barcode` = :bc';
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":bc", $barcode);
+        $stmt->execute();
+        $ct = $stmt->fetchColumn();
+        if($ct == 0){
+            $conn1 = new connection;
+            $pdo1 = $conn1->connectdb();
+            $query1 = 'INSERT INTO `stock_object`(`user_id`, `barcode`, `attributes`) VALUES (:id,:bc,:atr)';
+            $stmt1 = $pdo1->prepare($query1);
+            $stmt1->bindParam(":id", $id);
+            $stmt1->bindParam("bc", $barcode);
+            $stmt1->bindParam(":atr", $attributes);
+            $stmt1->execute();
+            if($pdo1->lastInsertId() != null){
+                return array( 'code' => 201, 'body' => 'Object Added');
+            }
+            else{
+                return array( 'code' => 401, 'body' => 'Object not added');
+            }
+        }else{
+            return array('code' => 400, 'body' => 'object with barcode already exists');
+        }
+
+    }
+
+    function getStockObjects($id){
+        $conn = new connection;
+        $pdo = $conn->connectdb();
+        $query = 'SELECT `attributes`, `barcode` FROM `stock_object` WHERE `user_id` = :id';
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        return $stmt->fetchall(PDO::FETCH_ASSOC);
+    }
+
+    function getStockObject($id){
+        $conn = new connection;
+        $pdo = $conn->connectdb();
+        $query = 'SELECT `attributes` FROM `stock_object` WHERE `user_id` = :id AND `barcode` = :bc';
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":bc", $_GET['barcode']);
+        $stmt->execute();
+        return $stmt->fetchall(PDO::FETCH_ASSOC);
+    }
+    
+    function deleteStockObject($id){
+        $conn = new connection;
+        $pdo = $conn->connectdb();
+        $query = 'DELETE FROM `stock_object` WHERE `user_id` = :id AND `barcode` = :bc';
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":bc", $_GET['barcode']);
+        $stmt->execute();
+        return array('deleted' => true);
+    }
+
+    function checkBarcode($id){
+        $conn = new connection;
+        $pdo = $conn->connectdb();
+        $query = 'SELECT count(`attributes`) FROM `stock_object` WHERE `user_id` = :id AND `barcode` = :bc';
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":bc", $_GET['barcode']);
+        $stmt->execute();
+        $ct = $stmt->fetchColumn();
+        if($ct == 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    function changeStock($id){
+        $conn = new connection;
+        $pdo = $conn->connectdb();
+        $query = 'SELECT `item_id` FROM `stock_object` WHERE `user_id` = :id AND `barcode` = :bc';
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":bc", $_GET['barcode']);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $item_id = $row['item_id'];
+        $query1 = 'SELECT count(*) FROM `stock_data` WHERE `location_id` = :locid AND `item_id` = :iid';
+        $stmt1 = $pdo->prepare($query1);
+        $stmt1->bindParam(":locid", $_GET['locationid']);
+        $stmt1->bindParam(":iid", $item_id);
+        $stmt1->execute();
+        $ct = $stmt1->fetchColumn();
+        if($ct == 0){
+            $query2 = 'INSERT INTO `stock_data`(`stock_amount`, `item_id`, `location_id`) VALUES (:amo,:iid,:locid)';
+            $stmt2 = $pdo->prepare($query2);
+            $stmt2->bindParam(":amo", $_GET['amount']);
+            $stmt2->bindParam(":iid", $item_id);
+            $stmt2->bindParam(":locid", $_GET['locationid']);
+            $stmt2->execute();
+            if($pdo->lastInsertId() != null){
+                return array( 'code' => 201, 'body' => 'Stock Added');
+            }
+            else{
+                return array( 'code' => 401, 'body' => 'Stock not added');
+            }
+        }
+        else{
+            if($_GET['sign'] == 'add'){
+                $query3 = 'UPDATE `stock_data` SET `stock_amount` = `stock_amount` + :amo WHERE item_id = :iid AND location_id = :locid';
+                $stmt3 = $pdo->prepare($query3);
+                $stmt3->bindParam(":amo", $_GET['amount']);
+                $stmt3->bindParam(":iid", $item_id);
+                $stmt3->bindParam(":locid", $_GET['locationid']);
+                $stmt3->execute();
+                return array( 'code' => 201, 'body' => 'Stock Updated');
+            }
+            else{
+                $query3 = 'UPDATE `stock_data` SET `stock_amount` = `stock_amount` - :amo WHERE item_id = :iid AND location_id = :locid';
+                $stmt3 = $pdo->prepare($query3);
+                $stmt3->bindParam(":amo", $_GET['amount']);
+                $stmt3->bindParam(":iid", $item_id);
+                $stmt3->bindParam(":locid", $_GET['locationid']);
+                $stmt3->execute();
+                return array( 'code' => 201, 'body' => 'Stock Updated');
+            }
+
+        }
+
     }
 
 }
