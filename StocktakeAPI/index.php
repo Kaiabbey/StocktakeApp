@@ -5,12 +5,11 @@ session_name();
 session_start();
 header('Content-type: application/json');
 //test header for local accesss
-header("Access-Control-Allow-Origin: http://localhost:3000");
+//header("Access-Control-Allow-Origin: http://localhost:3000");
 //header for live website
-//header("Access-Control-Allow-Origin: https://kaiabbey.work");
+header("Access-Control-Allow-Origin: https://kaiabbey.work");
 
 header("Access-Control-Allow-Credentials: true");
-//isCorrectOrigin();
 
 $validation = new validation;
 
@@ -376,25 +375,6 @@ function secondRateLimit($limit){
         else{
             $_SESSION['secondBucket'] = $_SESSION['secondBucket'] + 1;
         }
-    }
-}
-
-function isCorrectOrigin(){
-    //HTTP_ORIGIN header
-    $origin = $_SERVER["HTTP_ORIGIN"];
-    // Allowed domain names
-    $allowed_domains = [
-        "http://localhost:3000",
-        "https://kaiabbey.work"
-    ];
-
-    if (in_array($origin, $allowed_domains)) {
-        //header("Access-Control-Allow-Origin: http://localhost:3000");
-        header('Access-Control-Allow-Origin: ' . $origin);
-    } else {
-        http_response_code(403);
-        echo 'wrong origin!';
-        die();
     }
 }
 

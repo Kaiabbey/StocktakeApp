@@ -63,7 +63,7 @@
         }
 
         function firstnameValid($firstname){
-            if(preg_match('/[a-zA-z]{2,16}/',$firstname,)){
+            if(preg_match('/[a-zA-z]{2,16}/g',$firstname,)){
                 return true;
             }   
             else{
@@ -72,7 +72,7 @@
         }
 
         function lastnameValid($lastname){
-            if(preg_match('/[a-zA-z]{2,16}/',$lastname)){
+            if(preg_match('/[a-zA-z]{2,16}/g',$lastname)){
                 return true;
             }   
             else{
@@ -81,7 +81,7 @@
         }
 
         function barcodeValid($barcode){
-            if(preg_match('/[0-9]{2,16}/',$barcode)){
+            if(preg_match('/[0-9]{2,16}/g',$barcode)){
                 return true;
             }   
             else{
@@ -108,7 +108,7 @@
         }
 
         function attributesValid($lastname){
-            if(preg_match('/[\S]{2,}/',$lastname)){
+            if(preg_match('/[a-zA-Z0-9]{2,16}/g',$lastname)){
                 return true;
             }   
             else{
@@ -126,7 +126,7 @@
         }
 
         function locationnameGETValid($location){
-            if(preg_match('/[a-zA-z]{2,16}/',$location)){
+            if(preg_match('/[a-zA-Z0-9]{2,16}/g',$location)){
                 return true;
             }   
             else{
@@ -135,7 +135,7 @@
         }
 
         function locationGETValid($location){
-            if(preg_match('/[a-zA-z]{2,16}/',$location)){
+            if(preg_match('/[a-zA-z]{2,16}/g',$location)){
                 return true;
             }   
             else{
