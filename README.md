@@ -20,15 +20,37 @@ and hosted
 
 #8 run 'npm start' this should open a react server on localhost:3000
 
+<h1>Hosting</h1>
 
+1# change the API variables found in js.js and app.js to the relative links and comment out the localhost variables
+
+#2 in connection change the database credentials to the database hosted on your provider
+
+#3 if any changes were made to the database structure export a new sql file from the database
+
+#4 upload the database to the hosted mysql server
+
+#5 once ready to host run 'npm run build' in the react developement enviroment in Mainstockapplication
+
+#6 create a zip of the build file that is generated in the file structure
+
+#7 create a zip of the StocktakeAPI folder located in the PHP stack
+
+#8 upload both via Cpanel into the root directory of your hosted domain in the public folder
+
+#9 extract both folder from the zips
+
+#10 move all files in the build up one folder from build to the public folder (leave the API folder as is)
+
+#11 if done correctly your domain should provide the website to users
 
 <h1>Testing</h1>
 
-#5 navigate to the 'stocktakepuppet' folder and open a new terminal
+#1 navigate to the 'stocktakepuppet' folder and open a new terminal
 
-#6 install puppeteer using 'npm i puppeteer'
+#2 install puppeteer using 'npm i puppeteer'
 
-#7 run in terminal 'node Logintest.js' and 'node RegisterTest.js' to do tests on the API
+#3 run in terminal 'node Logintest.js' and 'node RegisterTest.js' to do tests on the API
 
 <h1>Functionality</h1>
 
@@ -44,6 +66,21 @@ Users can select amount they want to change by, then choose if they want add or 
 
 in the settings section users can see their details and set options to stay logged in or not,
 and what theme they want to use.
+
+<h1>Technologies</h1>
+
+<h3>Fomantic UI</h3>
+<p>I'm using Fomantic UI As a CDN to keep it up to date it's run most of my styling on the front end and incorporates interactive elements such as the sidebar</p>
+
+<h3>React</h3>
+<p>I'm using the most recent React version to server administration data to better seperate the admin section from the sections for all users</p>
+
+<h3>html5-qrcode</h3>
+<p>i'm using a CDN to use the most recent version, i'm using this technology to power my scanning functionality and it integral to my application running</p>
+
+<h3>Bouncer</h3>
+<p>I'm using a CDN to import the most recent version of Bouncer. Bouncer is used for my front end validation and error handling on incorrect inputs</p>
+
 
 <h1>Road Map</h1>
 
