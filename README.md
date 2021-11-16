@@ -8,7 +8,7 @@
 
 #3 import the stocktakeapp.sql file into your mysql database
 
-#4 Open the Mainapplication folder in visual studio or code editer of your choice
+#4 Open the StocktakeMain folder in visual studio or code editer of your choice
 
 #5 run 'npm install' to download all the required dependencies
 
@@ -30,7 +30,7 @@ and hosted
 
 #4 upload the database to the hosted mysql server
 
-#5 once ready to host run 'npm run build' in the react developement enviroment in Mainstockapplication
+#5 once ready to host run 'npm run build' in the react developement enviroment in StocktakeMain folder
 
 #6 create a zip of the build file that is generated in the file structure
 
