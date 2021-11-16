@@ -92,8 +92,12 @@ I want to add better functionality for features in regards to stock management a
 	<p>- better integration of errors and popups not using integrated chrome alerts</p>
 	<p>- A more custom ui design for the scanner i.e removal of ugly preset elements, animation to show scanning</p>
 
+<h1>In Relation to the plan</h1>
+<P> I planned to use 'scandit' library to implement code scanning, but ended up using html5-qrcode library because of it being non-premium, if I were to make this a commerical product, I would potentially look at using 'scandit' or some other premium library for better code scanning</p>
+<p>I originally planned to use a public API to reference Barcode information to help pre-populate scanned barcodes with item data, but i found that the API's i tryed using
+	were not returning information on barcodes i was referencing and decided to just make all data insertion manual on the users end</p>
 
-<h2>Why Documentation is important</h2>
+<h1>Why Documentation is important</h1>
 <p>
 	Without the implementation of Help pages, Functionality specification, and a Road Map.
 	Future potential developers and users wont have anything to help with interacting with our product
