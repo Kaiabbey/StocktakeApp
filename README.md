@@ -1,12 +1,24 @@
 # StocktakeApp
 
-<h1>Installing website</h1>
+<h1>Setting up development enviroment</h1>
 
-#1 clone directly into WWW folder or folder for your localhost stack
+#1 Clone StocktakeApp into your local documents
 
-#2 create database called 'stocktakeapp' import stocktakeapp.sql file into new database
+#2 Copy out the StocktakeAPI into your local php stack
 
-#3 open the connection.php file in StocktakeAPI and change to the $user_name and $password variables to your database's login
+#3 import the stocktakeapp.sql file into your mysql database
+
+#4 Open the Mainapplication folder in visual studio or code editer of your choice
+
+#5 run 'npm install' to download all the required dependencies
+
+#6 check the js.js and app.js they both will have two variables called API, one will be commented out, change the one with localhost in the url to the url of where you put
+the StocktakeAPI folder
+
+#7 open the connection.php file in the stocktakeAPI folder and change the database credentials to your Mysql Database login and port this also has one set of details for local
+and hosted
+
+#8 run 'npm start' this should open a react server on localhost:3000
 
 
 
