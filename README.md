@@ -103,4 +103,5 @@ I want to add better functionality for features in regards to stock management a
 	Future potential developers and users wont have anything to help with interacting with our product
 	and knowing what to work on as a developer. this information is crucial for the longevity of a project.
 	Other documentation including how to deploy the website and how testing is implemented is important aswell.
+	hey shari
 </p>
